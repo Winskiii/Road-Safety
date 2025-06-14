@@ -62,12 +62,12 @@ from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier,
 from xgboost import XGBClassifier
 from sklearn.metrics import classification_report, confusion_matrix
 import optuna
+```
 2. Membaca Dataset
 Memuat data dari file .csv ke dalam DataFrame Pandas.
-
-Python
-
+```python
 df = pd.read_csv('train_road_safety.csv')
+```
 3. Pengecekan Awal Data (Sanity Check)
 Memahami struktur data, tipe data, dan mengidentifikasi anomali awal.
 
@@ -80,14 +80,15 @@ Menemukan pola dan wawasan dari data melalui visualisasi.
 Distribusi Target: Ditemukan bahwa data tidak seimbang, di mana jumlah korban luka ringan jauh lebih banyak dari korban fatal.
 Deteksi Outlier: Boxplot menunjukkan adanya outlier pada fitur numerik.
 Analisis Bivariat: Hubungan antar fitur dianalisis untuk menemukan korelasi dan pola yang relevan dengan tingkat keparahan.
+
 5. Penanganan Data Hilang (Missing Value Treatments)
 Penghapusan Kolom: Kolom yang tidak informatif (status, collision_year, lsoa_of_casualty) dihapus.
 Imputasi: Nilai yang hilang pada kolom kategorikal diisi menggunakan modus (nilai yang paling sering muncul).
+
 6. Penanganan Outlier (Outliers Treatments)
 Untuk meningkatkan robustisitas model, outlier ditangani dengan metode capping (pembatasan) berdasarkan rentang interkuartil (IQR).
 
-Python
-
+```python
 def cap_outliers(df, column_name):
     Q1 = df[column_name].quantile(0.25)
     Q3 = df[column_name].quantile(0.75)
@@ -102,35 +103,37 @@ def cap_outliers(df, column_name):
 
 # Contoh penerapan:
 # df_treated = cap_outliers(df.copy(), 'age_of_casualty')
+```
+
 7. Penanganan Duplikat & Nilai Sampah
 Duplikat: Dilakukan pengecekan untuk memastikan tidak ada baris data yang identik.
 Nilai Sampah: Nilai -1 yang teridentifikasi sebelumnya dipertahankan karena model berbasis pohon dapat menanganinya sebagai kategori terpisah.
-Python
-
+```python
 # Kode untuk memeriksa duplikat
 duplicate_rows = df.duplicated().sum()
 print(f"Jumlah baris duplikat ditemukan: {duplicate_rows}")
 
 # Jika ditemukan, hapus dengan:
 # df.drop_duplicates(inplace=True)
+```
+
 8. Normalisasi / Penskalaan Data
 Fitur numerik diskalakan untuk menyamakan rentang nilainya, yang penting untuk beberapa algoritma. RobustScaler dipilih karena efektif menangani outlier.
-
-Python
-
+```python
 from sklearn.preprocessing import RobustScaler
 
 numerical_features = ['collision_index', 'vehicle_reference', 'casualty_reference', 'age_of_casualty']
 scaler = RobustScaler()
 
 # df[numerical_features] = scaler.fit_transform(df[numerical_features])
+```
+
 9. Encoding Data Kategorikal
 Fitur kategorikal diubah menjadi format numerik dengan pendekatan yang tepat:
 
 OrdinalEncoder: Untuk fitur yang memiliki tingkatan (age_band_of_casualty).
 OneHotEncoder: Untuk fitur nominal yang tidak memiliki urutan (casualty_class, sex_of_casualty, dll).
-Python
-
+```python
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import OrdinalEncoder, OneHotEncoder
 
@@ -145,6 +148,8 @@ preprocessor = ColumnTransformer(
     remainder='passthrough'
 )
 # X_encoded = preprocessor.fit_transform(X)
+```
+
 🤖 Pemodelan & Hasil
 Seleksi Model: Beberapa model (KNN, Decision Tree, XGBoost, Gradient Boosting, dll.) dievaluasi menggunakan 5-fold cross-validation. Model berbasis ansambel seperti XGBoost dan Gradient Boosting menunjukkan performa terbaik.
 Tuning Hiperparameter: Optuna digunakan untuk mencari kombinasi hiperparameter terbaik untuk model-model teratas.
@@ -152,9 +157,9 @@ Model Final dan Hasil: Model Gradient Boosting Classifier yang telah di-tuning m
 ⚙️ Instalasi & Requirements
 Untuk menjalankan notebook ini, Anda memerlukan library Python berikut yang dapat diinstal melalui pip:
 
-Bash
-
+```bash
 pip install pandas numpy matplotlib seaborn scikit-learn xgboost optuna
+```
 🚀 Cara Menjalankan
 Lakukan clone pada repositori ini.
 Instal semua library yang dibutuhkan sesuai dengan bagian Requirements.
