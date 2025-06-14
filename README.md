@@ -63,29 +63,30 @@ from xgboost import XGBClassifier
 from sklearn.metrics import classification_report, confusion_matrix
 import optuna
 ```
-###2. Membaca Dataset
+### 2. Membaca Dataset
 Memuat data dari file .csv ke dalam DataFrame Pandas.
 ```python
 df = pd.read_csv('train_road_safety.csv')
 ```
-###3. Pengecekan Awal Data (Sanity Check)
+### 3. Pengecekan Awal Data (Sanity Check)
 Memahami struktur data, tipe data, dan mengidentifikasi anomali awal.
 
 Dimensi Data: 46,649 baris dan 21 kolom.
 Data Hilang: Teridentifikasi pada beberapa kolom (status, collision_year, dll).
 Statistik: Ditemukan nilai konstan pada collision_year dan nilai -1 sebagai placeholder.
-###4. Analisis Data Eksploratif (EDA)
+
+### 4. Analisis Data Eksploratif (EDA)
 Menemukan pola dan wawasan dari data melalui visualisasi.
 
 Distribusi Target: Ditemukan bahwa data tidak seimbang, di mana jumlah korban luka ringan jauh lebih banyak dari korban fatal.
 Deteksi Outlier: Boxplot menunjukkan adanya outlier pada fitur numerik.
 Analisis Bivariat: Hubungan antar fitur dianalisis untuk menemukan korelasi dan pola yang relevan dengan tingkat keparahan.
 
-###5. Penanganan Data Hilang (Missing Value Treatments)
+### 5. Penanganan Data Hilang (Missing Value Treatments)
 Penghapusan Kolom: Kolom yang tidak informatif (status, collision_year, lsoa_of_casualty) dihapus.
 Imputasi: Nilai yang hilang pada kolom kategorikal diisi menggunakan modus (nilai yang paling sering muncul).
 
-###6. Penanganan Outlier (Outliers Treatments)
+### 6. Penanganan Outlier (Outliers Treatments)
 Untuk meningkatkan robustisitas model, outlier ditangani dengan metode capping (pembatasan) berdasarkan rentang interkuartil (IQR).
 
 ```python
@@ -105,7 +106,7 @@ def cap_outliers(df, column_name):
 # df_treated = cap_outliers(df.copy(), 'age_of_casualty')
 ```
 
-###7. Penanganan Duplikat & Nilai Sampah
+### 7. Penanganan Duplikat & Nilai Sampah
 Duplikat: Dilakukan pengecekan untuk memastikan tidak ada baris data yang identik.
 Nilai Sampah: Nilai -1 yang teridentifikasi sebelumnya dipertahankan karena model berbasis pohon dapat menanganinya sebagai kategori terpisah.
 ```python
@@ -117,7 +118,7 @@ print(f"Jumlah baris duplikat ditemukan: {duplicate_rows}")
 # df.drop_duplicates(inplace=True)
 ```
 
-###8. Normalisasi / Penskalaan Data
+### 8. Normalisasi / Penskalaan Data
 Fitur numerik diskalakan untuk menyamakan rentang nilainya, yang penting untuk beberapa algoritma. RobustScaler dipilih karena efektif menangani outlier.
 ```python
 from sklearn.preprocessing import RobustScaler
@@ -128,7 +129,7 @@ scaler = RobustScaler()
 # df[numerical_features] = scaler.fit_transform(df[numerical_features])
 ```
 
-###9. Encoding Data Kategorikal
+### 9. Encoding Data Kategorikal
 Fitur kategorikal diubah menjadi format numerik dengan pendekatan yang tepat:
 
 OrdinalEncoder: Untuk fitur yang memiliki tingkatan (age_band_of_casualty).
@@ -150,7 +151,7 @@ preprocessor = ColumnTransformer(
 # X_encoded = preprocessor.fit_transform(X)
 ```
 
-##🤖 Pemodelan & Hasil
+## 🤖 Pemodelan & Hasil
 Seleksi Model: Beberapa model (KNN, Decision Tree, XGBoost, Gradient Boosting, dll.) dievaluasi menggunakan 5-fold cross-validation. Model berbasis ansambel seperti XGBoost dan Gradient Boosting menunjukkan performa terbaik.
 Tuning Hiperparameter: Optuna digunakan untuk mencari kombinasi hiperparameter terbaik untuk model-model teratas.
 Model Final dan Hasil: Model Gradient Boosting Classifier yang telah di-tuning memberikan performa terbaik pada data validasi, dengan akurasi ~96.75%. Evaluasi lebih lanjut dengan classification report dan confusion matrix dilakukan untuk memahami performa model pada setiap kelas.
@@ -160,7 +161,7 @@ Untuk menjalankan notebook ini, Anda memerlukan library Python berikut yang dapa
 ```bash
 pip install pandas numpy matplotlib seaborn scikit-learn xgboost optuna
 ```
-##🚀 Cara Menjalankan
+## 🚀 Cara Menjalankan
 Lakukan clone pada repositori ini.
 Instal semua library yang dibutuhkan sesuai dengan bagian Requirements.
 Letakkan file train_road_safety.csv di direktori yang sama dengan notebook.
